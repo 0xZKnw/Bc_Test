@@ -44,7 +44,7 @@ class Node:
             peer.connect((host, port))
             self.peers.append(peer)
             print(f"Connecté au pair {host}:{port}")
-            #peer.sendall(b"psdo:" + pseudo.encode('utf-8'))
+            peer.sendall(b"psdo:" + pseudo.encode('utf-8'))
         except Exception as e:
             print(f"Erreur lors de la connexion au pair {host}:{port} : {e}")
 
@@ -56,22 +56,22 @@ class Node:
             except Exception as e:
                 print(f"Erreur lors de l'envoi au pair : {e}")
 
-    def startNode(self):
+    def startNode(self, ipPeer1=None):
         pseudo = str(input("ton pseudo : "))
         a = f"{pseudo} : "
         server_thread = threading.Thread(target=self.start_server, args=(pseudo,))
         server_thread.start()
-        while a != "STOP":
-            a = f"{pseudo} : "
-            a += str(input(""))
-            if "connectToIp" in a:
-                a.replace(f"{pseudo} : connectToIp ")
-                self.connect_to_peer(a, self.port)
-            self.broadcast_message(a)
-        self.close()
+        if ipPeer1 != None:
+            self.connect_to_peer(ipPeer1, 5006, pseudo)
+            while a != "STOP":
+                a = f"{pseudo} : "
+                a += str(input(""))
+                self.broadcast_message(a)
+            self.close()
 
     def close(self):
-        self.close()
+        exit()
 
-node1 = Node('192.168.173.185')
-node1.startNode()
+ipLocal = str(input("Quelle est ton ipv4 ? : "))
+node1 = Node(ipLocal)
+node1.startNode('192.168.173.126')
