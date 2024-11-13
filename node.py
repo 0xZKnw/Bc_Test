@@ -41,7 +41,7 @@ class Node:
                     break
                 print(f"Message reçu de {addr}: {data.decode('utf-8')}")
                 # Si le message est nouveau, il est diffusé
-                self.broadcast_message(data.decode('utf-8'), addr)
+                #self.broadcast_message(data.decode('utf-8'), addr)
         except Exception as e:
             print(f"Erreur avec {addr}: {e}")
         finally:
@@ -57,7 +57,7 @@ class Node:
                 peer.connect((host, port))
                 self.peers.append(peer)
                 print(f"Connecté au pair {host}:{port}")
-                peer.sendall(b"bite")  # Exemple de message d'initialisation
+                #peer.sendall(b"bite")  # Exemple de message d'initialisation
         except Exception as e:
             print(f"Erreur lors de la connexion au pair {host}:{port} : {e}")
             peer.close()
