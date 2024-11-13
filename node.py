@@ -2,10 +2,10 @@ import socket
 import threading
 
 class Node:
-    def __init__(self, host):
+    def __init__(self, host, port):
         '''creation objet Node et initialisation variables host ports et peers'''
         self.host = host
-        self.port = 5006
+        self.port = port
         self.peers = []
     
     def start_server(self, pseudo):
@@ -55,23 +55,17 @@ class Node:
                 peer.sendall(message.encode('utf-8'))
             except Exception as e:
                 print(f"Erreur lors de l'envoi au pair : {e}")
-
-    def startNode(self, ipPeer1=None):
-        pseudo = str(input("ton pseudo : "))
-        a = f"{pseudo} : "
-        server_thread = threading.Thread(target=self.start_server, args=(pseudo,))
-        server_thread.start()
-        if ipPeer1 != None:
-            self.connect_to_peer(ipPeer1, 5006, pseudo)
-            while a != "STOP":
-                a = f"{pseudo} : "
-                a += str(input(""))
-                self.broadcast_message(a)
-            self.close()
-
     def close(self):
-        exit()
+        self.close()
 
-ipLocal = str(input("Quelle est ton ipv4 ? : "))
-node1 = Node(ipLocal)
-node1.startNode('192.168.173.126')
+ipLocal = str(input("ton ip ? : "))
+pseudo = str(input("ton pseudo : "))
+a = f"{pseudo} : "
+node_1 = Node(ipLocal, 5006)
+server_thread = threading.Thread(target=node_1.start_server, args=(pseudo,))
+server_thread.start()
+while a != "STOP":
+    a = f"{pseudo} : "
+    a += str(input(""))
+    node_1.broadcast_message(a)
+node_1.close()
