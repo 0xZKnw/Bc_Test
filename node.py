@@ -32,8 +32,8 @@ class Node:
         print(f"Traitement de la connexion depuis {addr}")
         
         # Connecte uniquement si ce nœud n'a pas initié la connexion
-        if '192.0.0.2' != self.host and addr[1] != self.port:
-            self.connect_to_peer('192.0.0.2', 5006)  # Remplace par le port approprié si nécessaire
+        if addr[0] != self.host and addr[1] != self.port:
+            self.connect_to_peer(addr[0], 5006)  # Remplace par le port approprié si nécessaire
         
         try:
             while True:
