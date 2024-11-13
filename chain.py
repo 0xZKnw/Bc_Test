@@ -24,7 +24,5 @@ class Bc:
     def getChain(self):
         return self.chain
     
-bc = Bc()
-print(bc.getChain())
-bc.addBlock("bonjour")
-print(bc.getChain()[1].time)
+    def getLenChain(self):
+        return len(self.chain)
