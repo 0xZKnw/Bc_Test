@@ -8,6 +8,7 @@ class Node:
         self.port = port
         self.peers = []  # Contient uniquement les connexions sortantes initiées par ce nœud
         self.connections = {}  # Gère les connexions entrantes et leurs adresses
+        self.pseudo = str(input("quel est ton pseudo ? : "))
 
     def start_server(self):
         '''Démarrage du serveur'''
@@ -39,7 +40,7 @@ class Node:
                 data = conn.recv(1024)
                 if not data:
                     break
-                print(f"Message reçu de {addr}: {data.decode('utf-8')}")
+                print(f"{data.decode('utf-8')}")
                 # Si le message est nouveau, il est diffusé
                 #self.broadcast_message(data.decode('utf-8'), addr)
         except Exception as e:
@@ -68,7 +69,8 @@ class Node:
             # Envoie uniquement aux pairs qui ne sont pas les émetteurs originaux
             if sender_addr is None or peer.getpeername() != sender_addr:
                 try:
-                    peer.sendall(message.encode('utf-8'))
+                    m = self.pseudo + " : " + message
+                    peer.sendall(m.encode('utf-8'))
                 except Exception as e:
                     print(f"Erreur lors de l'envoi au pair : {e}")
                     peer.close()
