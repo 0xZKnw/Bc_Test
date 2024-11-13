@@ -2,13 +2,13 @@ import socket
 import threading
 
 class Node:
-    def __init__(self, host, port):
+    def __init__(self, host):
         '''creation objet Node et initialisation variables host ports et peers'''
         self.host = host
-        self.port = port
+        self.port = 5006
         self.peers = []
     
-    def start_server(self):
+    def start_server(self, pseudo):
         '''demarrage du serveur'''
         server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -20,6 +20,7 @@ class Node:
             conn, addr = server.accept()
             print(f"Connexion acceptée de {addr}")
             threading.Thread(target=self.handleClient, args=(conn, addr)).start()
+            self.connect_to_peer(addr[0], 5006, pseudo)
 
     def handleClient(self, conn, addr):
         '''ecoute message entrant et repond'''
@@ -30,21 +31,20 @@ class Node:
                 if not data:
                     break
                 print(f"Message reçu de {addr}: {data.decode('utf-8')}")
-                conn.sendall(b"recu")
         except Exception as e:
             print(f"Erreur avec {addr}: {e}")
         finally:
             conn.close()
             print(f"Connexion fermée avec {addr}")
 
-    def connect_to_peer(self, host, port):
+    def connect_to_peer(self, host, port, pseudo):
         '''connection aux appareils entrant dans le reseau'''
         peer = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         try:
             peer.connect((host, port))
             self.peers.append(peer)
             print(f"Connecté au pair {host}:{port}")
-            peer.sendall(b"bite")
+            #peer.sendall(b"psdo:" + pseudo.encode('utf-8'))
         except Exception as e:
             print(f"Erreur lors de la connexion au pair {host}:{port} : {e}")
 
@@ -56,10 +56,22 @@ class Node:
             except Exception as e:
                 print(f"Erreur lors de l'envoi au pair : {e}")
 
-node_1 = Node('ip locale', 5000)
-server_thread = threading.Thread(target=node_1.start_server)
-server_thread.start()
-node_1.connect_to_peer('ip locale du node', 5001)
-while True:
-    a = str(input(""))
-    node_1.broadcast_message(a)
+    def startNode(self):
+        pseudo = str(input("ton pseudo : "))
+        a = f"{pseudo} : "
+        server_thread = threading.Thread(target=self.start_server, args=(pseudo,))
+        server_thread.start()
+        while a != "STOP":
+            a = f"{pseudo} : "
+            a += str(input(""))
+            if "connectToIp" in a:
+                a.replace(f"{pseudo} : connectToIp ")
+                self.connect_to_peer(a, self.port)
+            self.broadcast_message(a)
+        self.close()
+
+    def close(self):
+        self.close()
+
+node1 = Node('192.168.173.185')
+node1.startNode()
